@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Personagens;
 use Illuminate\Http\Request;
 
 class PersonagensController extends Controller
@@ -12,15 +13,8 @@ class PersonagensController extends Controller
      */
     public function index()
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        $personagens = Personagens::all();
+        return response()->json($personagens);
     }
 
     /**
@@ -28,7 +22,17 @@ class PersonagensController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $personagem = new Personagens();
+        $personagem->name = $request->name;
+        $personagem->nickname = $request->nickname;
+        $personagem->class = $request->class;
+        $personagem->level = $request->level;
+        $personagem->magic_item_id = $request->magic_item_id;
+        $personagem->strength = $request->strength;
+        $personagem->defence = $request->defence;
+        $personagem->save();
+
+        return response()->json($personagem, 201);
     }
 
     /**
@@ -36,15 +40,8 @@ class PersonagensController extends Controller
      */
     public function show(string $id)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
+        $personagens = Personagens::find($id);
+        return response()->json($personagens, 200);
     }
 
     /**
@@ -52,7 +49,21 @@ class PersonagensController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $personagem = Personagens::find($id);
+        if (!is_null($personagem)) {
+            $personagem->name = $request->name;
+            $personagem->nickname = $request->nickname;
+            $personagem->class = $request->class;
+            $personagem->level = $request->level;
+            $personagem->magic_item_id = $request->magic_item_id;
+            $personagem->strength = $request->strength;
+            $personagem->defence = $request->defence;
+            $personagem->save();
+        }else{
+            return response()->json('Not Found', 404);
+        }
+
+        return response()->json($personagem, 201);
     }
 
     /**
@@ -60,6 +71,7 @@ class PersonagensController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        Personagens::find($id)->delete();
+        return response()->json('Successfully deleted',200);
     }
 }
