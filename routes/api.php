@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\MagicItemsController;
 use App\Http\Controllers\PersonagensController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -9,6 +10,8 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 Route::resource('personagens', PersonagensController::class);
+
+Route::resource('magic-items', MagicItemsController::class);
 
 // Route::get('/personagens', [\App\Http\Controllers\PersonagensController::class, 'index']);
 // Route::post('/personagens/create', [\App\Http\Controllers\PersonagensController::class, 'store']);
