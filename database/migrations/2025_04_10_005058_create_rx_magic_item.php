@@ -11,8 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('personagens', function (Blueprint $table) {
-            $table->string('magic_item_id')->change();
+        Schema::create('rx_magic_item', function (Blueprint $table) {
+            $table->id();
+            $table->integer('personagem_id');
+            $table->integer('magic_item_id');
+            $table->timestamps();
         });
     }
 
@@ -21,8 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('personagens', function (Blueprint $table) {
-            $table->integer(column: 'magic_item_id')->change();
-        });
+        Schema::dropIfExists('rx_magic_item');
     }
 };

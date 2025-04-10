@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Personagens extends Model
 {
@@ -13,8 +14,12 @@ class Personagens extends Model
         'nickname',
         'class',
         'level',
-        'magic_item_id',
         'strength',
         'defence'
     ];
+
+    public function magicItem()
+    {
+        return $this->hasMany(RxMagicItem::class, 'id', 'personagem_id');
+    }
 }
