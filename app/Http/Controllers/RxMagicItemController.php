@@ -36,7 +36,16 @@ class RxMagicItemController extends Controller
     public function service_item_persona_to_add($personagem_id, $magic_item_id)
     {
         $magicItem = MagicItems::find($magic_item_id);
+
+        if ($magicItem == null) {
+            return response()->json('Item mágico não encontrado!', 404);
+        }
+
         $personagem = Personagens::find($personagem_id);
+
+        if ($personagem == null) {
+            return response()->json('Personagem não encontrado!', 404);
+        }
 
         $checkDuplicateWithoutUnique = RxMagicItem::where('magic_item_id', $magicItem->id)->where('personagem_id', $personagem->id)->first();
         if($checkDuplicateWithoutUnique){

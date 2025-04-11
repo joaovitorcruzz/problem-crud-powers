@@ -121,7 +121,7 @@ class MagicItemsController extends Controller
      */
     public function destroy(string $id)
     {
-        $magicItemToDelete = MagicItems::where('id',$id)->fisrt();
+        $magicItemToDelete = MagicItems::where('id',$id)->first();
 
         if ($magicItemToDelete == null) {
             return response()->json('Item magico não encontrado', 404);
@@ -129,6 +129,6 @@ class MagicItemsController extends Controller
 
         $magicItemToDelete->delete();
 
-        return response()->json('Successfully deleted',200);
+        return response()->json('Relacional excluido',200);
     }
 }
