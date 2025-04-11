@@ -17,9 +17,3 @@ Route::resource('magic-items', MagicItemsController::class);
 Route::get('service-item-persona/{personagem_id}', [RxMagicItemController::class, 'service_item_persona']);
 Route::post('service-item-persona/{personagem_id}/to-add/{magic_item_id}', [RxMagicItemController::class, 'service_item_persona_to_add']);
 Route::delete('service-item-persona/{personagem_id}/to-remove/{magic_item_id}', [RxMagicItemController::class, 'service_item_persona_to_remove']);
-
-// Route::get('/personagens', [\App\Http\Controllers\PersonagensController::class, 'index']);
-// Route::post('/personagens/create', [\App\Http\Controllers\PersonagensController::class, 'store']);
-// Route::get('/personagens/{id}', [\App\Http\Controllers\PersonagensController::class, 'show']);
-// Route::put('/personagens/{id}', [\App\Http\Controllers\PersonagensController::class, 'update']);
-// Route::delete('/personagens/{id}', [\App\Http\Controllers\PersonagensController::class, 'destroy']);

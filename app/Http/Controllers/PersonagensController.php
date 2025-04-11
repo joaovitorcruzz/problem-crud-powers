@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\MagicItems;
 use App\Models\Personagens;
+use App\Models\RxMagicItem;
 use Illuminate\Http\Request;
 
 class PersonagensController extends Controller
@@ -14,6 +16,11 @@ class PersonagensController extends Controller
     public function index()
     {
         $personagens = Personagens::all();
+
+        if ($personagens->isEmpty()) {
+            return response()->json('Nenhum personagem encontrado', 404);
+        }
+
         return response()->json($personagens);
     }
 
@@ -56,6 +63,21 @@ class PersonagensController extends Controller
     public function show(string $id)
     {
         $personagens = Personagens::find($id);
+        if (is_null($personagens)){
+            return response()->json('Personagem não encontrado', 404);
+        }
+
+        $magicByPersona = RxMagicItem::where('personagem_id', $id)->pluck('magic_item_id');
+
+        if ($magicByPersona->isNotEmpty()) {
+            $magicItems = MagicItems::whereIn('id', $magicByPersona)->get();
+            $sumStrength = $magicItems->sum('strength');
+            $sumDefence = $magicItems->sum('defence');
+        }
+
+        $personagens->strength += $sumStrength ?? 0;
+        $personagens->defence += $sumDefence ?? 0;
+
         return response()->json($personagens, 200);
     }
 
@@ -64,15 +86,34 @@ class PersonagensController extends Controller
      */
     public function update(Request $request, string $id)
     {
+
         $personagem = Personagens::find($id);
         if (!is_null($personagem)) {
+
+            if ($request->name == null) {
+                return response()->json('Nome inválido, insira outro!', 400);
+            }
+
+            if ($request->nickname == null) {
+                return response()->json('Apelido inválido, insira outro!', 400);
+            }
+
+            if (!in_array($request->class, ["Guerreiro", "Mago", "Arqueiro", "Ladino", "Bardo"])) {
+                return response()->json('Classe inválida, insira outra!',400);
+            } 
+        
+            if (($request->strength + $request->defence) > 10) {
+                return response()->json('A soma de força e defesa não pode ser maior que 10! sejá decisivo agora, pois seus futuros items magicos serão influencia nessa soma também!', 400);
+            }
+
             $personagem->name = $request->name;
             $personagem->nickname = $request->nickname;
-            $personagem->class = $request->class;
-            $personagem->level = $request->level;
-            $personagem->strength = $request->strength;
-            $personagem->defence = $request->defence;
+            $personagem->class = $request->class ?? "Guerreiro";
+            $personagem->level = $request->level ?? 1;
+            $personagem->strength = $request->strength ?? 0;
+            $personagem->defence = $request->defence ?? 0;
             $personagem->save();
+
         }else{
             return response()->json('Not Found', 404);
         }
@@ -85,7 +126,14 @@ class PersonagensController extends Controller
      */
     public function destroy(string $id)
     {
-        Personagens::find($id)->delete();
-        return response()->json('Successfully deleted',200);
+        $personaToDelete = Personagens::where('id',$id)->first();
+
+        if ($personaToDelete == null) {
+            return response()->json('Personagem não encontrado', 404);
+        }
+
+        $personaToDelete->delete();
+
+        return response()->json('Personagem Excluido!',200);
     }
 }

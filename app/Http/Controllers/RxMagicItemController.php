@@ -17,7 +17,15 @@ class RxMagicItemController extends Controller
     {
         $rxMagicItem = RxMagicItem::where('personagem_id',$personagem_id)->pluck('magic_item_id');
 
+        if ($rxMagicItem->isEmpty()) {
+            return response('Esse personagem não possui nenhum item mágico!', 400);
+        }
+
         $magicItem = MagicItems::whereIn('id', $rxMagicItem)->get();
+
+        if ($magicItem->isEmpty()) {
+            return response('Esse personagem não possui nenhum item mágico!', 400);
+        }
 
         return response($magicItem, 200);
     }
