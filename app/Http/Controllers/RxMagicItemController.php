@@ -29,13 +29,29 @@ class RxMagicItemController extends Controller
     {
         $magicItem = MagicItems::find($magic_item_id);
         $personagem = Personagens::find($personagem_id);
-        // dd($magicItem, $personagem);
+
+        $checkDuplicateWithoutUnique = RxMagicItem::where('magic_item_id', $magicItem->id)->where('personagem_id', $personagem->id)->first();
+        if($checkDuplicateWithoutUnique){
+            return response('O personagem já possui esse item mágico!', 400);
+        }
+
+        if ($magicItem->type == "Amuleto") {
+            $rxMagicItemsByPersona = RxMagicItem::where('personagem_id', $personagem->id)->pluck('magic_item_id');
+            $magicItemsByPersona = MagicItems::whereIn('id', $rxMagicItemsByPersona)->get();
+    
+            foreach ($magicItemsByPersona as $item) {
+                if ($item->type == "Amuleto") {
+                    return response('O personagem já possui um amuleto!', 400);
+                }
+            }
+        }
+
         $rxMagicItem = new RxMagicItem();
         $rxMagicItem->magic_item_id = $magicItem->id;
         $rxMagicItem->personagem_id = $personagem->id;
         $rxMagicItem->save();
 
-            return response($rxMagicItem, 201);
+        return response($rxMagicItem, 201);
     }
 
     /**
